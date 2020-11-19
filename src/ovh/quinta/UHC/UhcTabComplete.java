@@ -23,12 +23,12 @@ public class UhcTabComplete implements TabCompleter {
 	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		if(label.equalsIgnoreCase("uhc")) {
+		if(args.length == 1) {
 			List<String> completions = new ArrayList<>();
 			StringUtil.copyPartialMatches(args[0], uhcComplete, completions);
 			return completions;
 		}
-		return null;
+		return List.of("");
 	}
 
 }

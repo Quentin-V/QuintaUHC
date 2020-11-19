@@ -112,7 +112,7 @@ public class StartStopExecutor implements CommandExecutor {
 				p.playSound(p.getLocation(), Sound.WITHER_DEATH, 3, 0);
 				p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 600, 99), true); // Resistance 30 secondes
 			}
-			
+
 			server.broadcastMessage(ChatColor.DARK_RED + "L'UHC commence");
 			plugin.settings.started = true;
 			return true;

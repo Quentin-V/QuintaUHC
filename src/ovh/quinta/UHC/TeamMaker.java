@@ -1,9 +1,8 @@
 package ovh.quinta.UHC;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,23 +11,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class TeamMaker implements CommandExecutor {
 
 	private Main plugin;
 	private Scoreboard sc;
-	
+
 	public static final String[] COLORS_LIST = {"black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white"};
 
 	public static final String[] RANDOM_TEAMS_COLORS = {"red",   "blue", "gold",  "purple", "pink", "green", "black", "aqua"};
 	public static final String[] RANDOM_TEAMS_NAMES  = {"Rouge", "Bleu", "Jaune", "Violet", "Rose", "Vert",  "Noir",  "Cyan"};
-	
+
 	public TeamMaker(Main plugin) {
 		this.plugin = plugin;
 		sc = plugin.server.getScoreboardManager().getMainScoreboard();
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(label.equalsIgnoreCase("teams")) {
@@ -57,7 +56,7 @@ public class TeamMaker implements CommandExecutor {
 		}
 		return false;
 	}
-	
+
 	private boolean addTeam(String[] args, CommandSender sender) {
 		boolean addedPlayers = false;
 		try {
@@ -81,7 +80,7 @@ public class TeamMaker implements CommandExecutor {
 		}
 		return false;
 	}
-	
+
 	private boolean removeTeam(String[] args, CommandSender sender) {
 		try {
 			Team toRemove = sc.getTeam(args[1]);
@@ -97,7 +96,7 @@ public class TeamMaker implements CommandExecutor {
 		}
 		return false;
 	}
-	
+
 	private boolean teamColor(String[] args, CommandSender sender) {
 		try {
 			String teamName = args[1];
@@ -149,13 +148,31 @@ public class TeamMaker implements CommandExecutor {
 
 	private boolean randomTeam(String[] args, CommandSender sender) {
 		try {
-			
-		}catch(Exception e) {
-			
+			int playersPerTeam = Integer.parseInt(args[1]);
+			double teamCount = (double)plugin.server.getOnlinePlayers().size() / playersPerTeam;
+			int iTeamCount = (int) Math.ceil(teamCount);
+			if(teamCount != iTeamCount) sender.sendMessage(ChatColor.GOLD + "UHC : Attention, au moins une équipe ne sera pas complète");
+			for(int i = 0; i < iTeamCount; ++i) {
+				Team t = sc.getTeam(RANDOM_TEAMS_NAMES[i]);
+				if (t != null) {
+					t.unregister();
+				}
+				sc.registerNewTeam(RANDOM_TEAMS_NAMES[i]);
+				plugin.server.dispatchCommand(plugin.console, "scoreboard teams option " + RANDOM_TEAMS_NAMES[i] + " color " + RANDOM_TEAMS_COLORS[i]);
+			}
+			ArrayList<Player> playerArrayList = new ArrayList<>(plugin.server.getOnlinePlayers());
+			for(int i = 0; i < playerArrayList.size(); ++i) {
+				int random = (int) (Math.random() * playerArrayList.size());
+				sc.getTeam(RANDOM_TEAMS_NAMES[i]).addEntry(playerArrayList.remove(random).getName());
+			}
+			sender.sendMessage(ChatColor.GREEN + "UHC : " + iTeamCount + " teams créées");
+			showTeams(sender);
+		}catch(ArrayIndexOutOfBoundsException oob) {
+			sender.sendMessage(ChatColor.RED + "Usage : teams random <Nombre de joueurs par team>");
 		}
 		return false;
 	}
-	
+
 	private void showTeams(CommandSender sender) {
 		StringBuilder msg = new StringBuilder(ChatColor.GREEN + "Teams : \n");
 		for(Team t : sc.getTeams()) {

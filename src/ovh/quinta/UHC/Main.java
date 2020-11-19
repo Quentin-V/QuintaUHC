@@ -36,12 +36,14 @@ public class Main extends JavaPlugin {
 		console = server.getConsoleSender();
 		settings = new Settings();
 		server.broadcastMessage(ChatColor.GREEN + "QuintaUHC" + Bukkit.getVersion() + "enabled");
+		getCommand("uhc").setExecutor(new Settings());
 		getCommand("uhc").setTabCompleter(new UhcTabComplete());
 		getCommand("inv").setExecutor(new InventoryExecutor(this));
 		StartStopExecutor sse = new StartStopExecutor(this);
 		getCommand("startuhc").setExecutor(sse);
 		getCommand("stopuhc").setExecutor(sse);
 		getCommand("teams").setExecutor(new TeamMaker(this));
+		getCommand("teams").setTabCompleter(new TeamTabCompleter(this));
 		
 		timer = new Timer();
 	}
