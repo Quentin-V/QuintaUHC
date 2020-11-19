@@ -1,0 +1,36 @@
+main: ovh.quinta.UHC.Main
+name: QuintaUHC
+version: 1.4
+description: Plugin de l'UHC
+author: Quinta
+prefix: UHC
+commands:
+  Uhc:
+   description: Change les parametres de l'uhc en fonction des arguments de la commande
+  Heal:
+   permissions: uhc.heal
+   permission-message: Vous n'avez pas l'autorisation d'utiliser cette commande
+   description: Heal tous les joueurs
+   aliases: h
+  StartUHC:
+   permissions: uhc.start
+   permission-message: Vous n'avez pas l'autorisation d'utiliser cette commande
+   description: Commence l'UHC
+  Inv:
+   description: Permet de regarder l'inventaire des joueurs lorsque vous etes spectateur
+  StopUHC:
+   description: Stop l'UHC
+   permissions: uhc.stop
+   permission-message: Vous n'avez pas l'autorisation d'utiliser cette commande
+  Teams:
+   description: Permet de gerer les teams
+permissions:
+  uhc.heal:
+   description: Autorise la commande heal
+   default: op
+  uhc.start:
+   description: Autorise la commande StartUHC
+   default: op
+  uhc.stop:
+   description: Autorise la commande StopUHC
+   defualt: op
