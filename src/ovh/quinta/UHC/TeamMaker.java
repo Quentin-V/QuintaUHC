@@ -20,7 +20,7 @@ public class TeamMaker implements CommandExecutor {
 
 	public static final String[] COLORS_LIST = {"black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple", "yellow", "white"};
 
-	public static final String[] RANDOM_TEAMS_COLORS = {"red",   "blue", "gold",  "purple", "pink", "green", "black", "aqua"};
+	public static final String[] RANDOM_TEAMS_COLORS = {"red",   "blue", "gold",  "dark_purple", "light_purple", "green", "black", "aqua"};
 	public static final String[] RANDOM_TEAMS_NAMES  = {"Rouge", "Bleu", "Jaune", "Violet", "Rose", "Vert",  "Noir",  "Cyan"};
 
 	public TeamMaker(Main plugin) {
