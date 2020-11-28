@@ -3,11 +3,13 @@ package ovh.quinta.UHC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import ovh.quinta.UHC.listeners.ArmorEquipListener;
 import ovh.quinta.UHC.listeners.BlockBreakListener;
 import ovh.quinta.UHC.listeners.PlayerDeathListener;
 
@@ -18,8 +20,11 @@ public class Main extends JavaPlugin {
 	
 	Settings settings;
 
+	StartStopExecutor sse;
+
 	PlayerDeathListener pdl;
 	BlockBreakListener bbl;
+	ArmorEquipListener ael;
 	
 	BorderInfo bi;
 	
@@ -35,7 +40,7 @@ public class Main extends JavaPlugin {
 		getCommand("uhc").setExecutor(settings);
 		getCommand("uhc").setTabCompleter(new UhcTabComplete());
 		getCommand("inv").setExecutor(new InventoryExecutor(this));
-		StartStopExecutor sse = new StartStopExecutor(this);
+		sse = new StartStopExecutor(this);
 		getCommand("startuhc").setExecutor(sse);
 		getCommand("stopuhc").setExecutor(sse);
 		getCommand("teams").setExecutor(new TeamMaker(this));
@@ -49,6 +54,25 @@ public class Main extends JavaPlugin {
 		// Reloads
 		// Plugin reloads
 		//getServer( ).broadcastMessage( "UHC disabled" );
+		if(settings.started) { // Stops the uhc if started
+			bbl.stop(); bbl = null;
+			pdl.stop(); pdl = null;
+			bi.stop();  bi = null;
+			ael.stop(); ael = null;
+
+			sse.pvpTask.cancel();
+			sse.healTask.cancel();
+			sse.timer.purge();
+			sse.timer.cancel();
+
+			for(World w : server.getWorlds()) {
+				w.setGameRuleValue("sendCommandFeedback", "true");
+				w.setGameRuleValue("naturalRegeneration", "true");
+				server.dispatchCommand(console, "worldborder set 30000000");
+				w.setPVP(true);
+			}
+			settings.started = false;
+		}
 	}
 	
 	@Override
@@ -63,8 +87,10 @@ public class Main extends JavaPlugin {
 		}
 		return false;
 	}
-	
-	
+
+	public Settings getSettings() {
+		return settings;
+	}
 
 	public double getAppleDropRate() {
 		return settings.getAppleDropRate();

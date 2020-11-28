@@ -1,6 +1,6 @@
 main: ovh.quinta.UHC.Main
 name: QuintaUHC
-version: 1.4
+version: 1.5
 description: Plugin de l'UHC
 author: Quinta
 prefix: UHC

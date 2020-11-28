@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import ovh.quinta.UHC.listeners.ArmorEquipListener;
 import ovh.quinta.UHC.listeners.BlockBreakListener;
 import ovh.quinta.UHC.listeners.PlayerDeathListener;
 
@@ -42,6 +43,7 @@ public class StartStopExecutor implements CommandExecutor {
 
 			plugin.pdl = new PlayerDeathListener(plugin);
 			plugin.bbl = new BlockBreakListener(plugin);
+			plugin.ael = new ArmorEquipListener(plugin);
 			
 			String[] commandsStart = {
 					"gamemode 0 @a", // Tout le monde en survival
@@ -99,7 +101,6 @@ public class StartStopExecutor implements CommandExecutor {
 						}
 					}
 				};
-				server.broadcastMessage("Time before pvp in ms : " + settings.timeBeforePVP * 60 * 1000);
 				timer.schedule(pvpTask, settings.timeBeforePVP * 60 * 1000);
 			}
 			
@@ -110,7 +111,6 @@ public class StartStopExecutor implements CommandExecutor {
 						server.dispatchCommand(plugin.console, "heal");
 					}
 				};
-				server.broadcastMessage("Time before heal in ms : " + settings.timeBeforeFinalHeal * 60 * 1000);
 				timer.schedule(healTask, settings.timeBeforeFinalHeal * 60 * 1000);
 			}
 			
@@ -136,16 +136,15 @@ public class StartStopExecutor implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "UHC: Pas d'UHC en cours");
 				return true;
 			}
-			plugin.bbl.stop();
-			plugin.bbl = null;
-			plugin.pdl.stop();
-			plugin.pdl = null;
-			plugin.bi.stop();
-			plugin.bi = null;
+			plugin.bbl.stop(); plugin.bbl = null;
+			plugin.pdl.stop(); plugin.pdl = null;
+			plugin.bi.stop();  plugin.bi = null;
+			plugin.ael.stop(); plugin.ael = null;
 
 			pvpTask.cancel();
 			healTask.cancel();
 			timer.purge();
+			timer.cancel();
 
 			for(World w : server.getWorlds()) {
 				w.setGameRuleValue("sendCommandFeedback", "true");

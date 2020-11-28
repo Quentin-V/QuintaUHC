@@ -10,12 +10,12 @@ import net.md_5.bungee.api.ChatColor;
 
 public class BorderInfo {
 	
-	Plugin plugin;
+	Main plugin;
 	Server server;
 	Timer timer;
 	TimerTask infoTask;
 	
-	public BorderInfo(Plugin plugin) {
+	public BorderInfo(Main plugin) {
 		this.plugin = plugin;
 		this.server = plugin.getServer();
 		timer = new Timer();
@@ -26,11 +26,12 @@ public class BorderInfo {
 				server.broadcastMessage(ChatColor.BLUE + "Taille de la zone " + iSize + " blocks");
 			}
 		};
-		timer.schedule(infoTask, 0, 5 * 60 * 1000);
+		timer.schedule(infoTask, 0, plugin.settings.borderInfoInterval * 60 * 1000);
 	}
 
 	public void stop() {
 		infoTask.cancel();
 		timer.purge();
+		timer.cancel();
 	}
 }

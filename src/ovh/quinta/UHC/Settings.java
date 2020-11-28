@@ -14,6 +14,8 @@ public class Settings implements CommandExecutor {
 	double appleDropRate;
 	int timeBeforePVP;
 	int timeBeforeFinalHeal;
+	int maxDiamondArmorPces;
+	int borderInfoInterval;
 	
 	boolean started;
 	
@@ -25,12 +27,18 @@ public class Settings implements CommandExecutor {
 		appleDropRate = 4;
 		timeBeforePVP = 10;
 		timeBeforeFinalHeal = 5;
+		maxDiamondArmorPces = 2;
+		borderInfoInterval = 5;
 		
 		started = false;
 	}
 	
 	public double getAppleDropRate() {
 		return appleDropRate / 100.0;
+	}
+
+	public int getMaxDiamondArmorPces() {
+		return maxDiamondArmorPces;
 	}
 
 	@Override
@@ -116,19 +124,47 @@ public class Settings implements CommandExecutor {
 						sender.sendMessage(ChatColor.RED + "Usage : /uhc heal <Temps en minutes avant le final heal>");
 						return false;
 					}
+				case "maxdiamondarmorpieces":
+					try {
+						int maxPces = Integer.parseInt(args[1]);
+						if(maxPces < 0) maxPces = 0;
+						if(maxPces > 4) maxPces = 4;
+						maxDiamondArmorPces = maxPces;
+						if(maxDiamondArmorPces > 0) {
+							sender.sendMessage(ChatColor.GREEN + "Le nombre maximum de pieces d'armure en diamant autorisé est : " + maxPces);
+						}else {
+							sender.sendMessage(ChatColor.GREEN + "Les armures en diamant sont interdites");
+						}
+						return true;
+					}catch(IllegalArgumentException iae) {
+						sender.sendMessage(ChatColor.RED + "Usage : /uhc maxDiamondArmorPieces <Nombre maximal de pieces d'armure en diamant>");
+						return false;
+					}
+				case "borderinfointerval":
+					try {
+						int interval = Integer.parseInt(args[1]);
+						borderInfoInterval = Math.max(interval, 0);
+						sender.sendMessage("Le message d'information sera envoyé toutes les " + borderInfoInterval + "minutes");
+						return true;
+					}catch(IllegalArgumentException iae) {
+						sender.sendMessage(ChatColor.RED + "Usage : /uhc borderInfoInterval <Minutes entre le message d'info>");
+						return false;
+					}
 				case "show":
 					sender.sendMessage("UHC Settings :\n  - Border size : " + borderSize + 
 									   "\n  - Shrinked border size : " + shrinkedBorderSize + 
 									   "\n  - Shrink time : " + shrinkTime + " minutes" +
 									   "\n  - AppleDropRate : " + appleDropRate + "%" + 
 									   "\n  - PVP : " + (timeBeforePVP != 0 ? "Enabled after " + timeBeforePVP + " minutes" : "Enabled at begining") +
-									   "\n  - Final heal : " + (timeBeforeFinalHeal != 0 ? timeBeforeFinalHeal + " minutes" : "Disabled"));
+									   "\n  - Final heal : " + (timeBeforeFinalHeal != 0 ? timeBeforeFinalHeal + " minutes" : "Disabled") +
+									   "\n  - Max diamond armor pieces : " + maxDiamondArmorPces +
+									   "\n  - Border info interval : " + borderInfoInterval);
 					return true;
 				default:
 					throw new IllegalArgumentException("Wrong argument");
 			}
 		}catch(ArrayIndexOutOfBoundsException | IllegalArgumentException ia) {
-			sender.sendMessage(ChatColor.RED + "Usage : /uhc [borderSize | shrinkedSize | shrinkTime | spreadDistance | appleDropRate | pvp | heal | show] <option>");
+			sender.sendMessage(ChatColor.RED + "Usage : /uhc [borderSize | shrinkedSize | shrinkTime | spreadDistance | appleDropRate | pvp | heal | maxDiamondArmorPieces | show] <option>");
 			return false;
 		}
 	}

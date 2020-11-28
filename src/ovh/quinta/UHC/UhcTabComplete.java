@@ -18,6 +18,8 @@ public class UhcTabComplete implements TabCompleter {
 		"appleDropRate",
 		"pvp",
 		"heal",
+		"maxDiamondArmorPieces",
+		"borderInfoInterval",
 		"show"
 	));
 	
