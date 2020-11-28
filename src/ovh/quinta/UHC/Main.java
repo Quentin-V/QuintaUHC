@@ -1,7 +1,5 @@
 package ovh.quinta.UHC;
 
-import java.util.Timer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -19,9 +17,7 @@ public class Main extends JavaPlugin {
 	ConsoleCommandSender console;
 	
 	Settings settings;
-	
-	Timer timer;
-	
+
 	PlayerDeathListener pdl;
 	BlockBreakListener bbl;
 	
@@ -35,8 +31,8 @@ public class Main extends JavaPlugin {
 		server = this.getServer();
 		console = server.getConsoleSender();
 		settings = new Settings();
-		server.broadcastMessage(ChatColor.GREEN + "QuintaUHC" + Bukkit.getVersion() + "enabled");
-		getCommand("uhc").setExecutor(new Settings());
+		server.broadcastMessage(ChatColor.GREEN + "QuintaUHC " + Bukkit.getVersion() + " enabled");
+		getCommand("uhc").setExecutor(settings);
 		getCommand("uhc").setTabCompleter(new UhcTabComplete());
 		getCommand("inv").setExecutor(new InventoryExecutor(this));
 		StartStopExecutor sse = new StartStopExecutor(this);
@@ -44,8 +40,7 @@ public class Main extends JavaPlugin {
 		getCommand("stopuhc").setExecutor(sse);
 		getCommand("teams").setExecutor(new TeamMaker(this));
 		getCommand("teams").setTabCompleter(new TeamTabCompleter(this));
-		
-		timer = new Timer();
+
 	}
 	
 	@Override

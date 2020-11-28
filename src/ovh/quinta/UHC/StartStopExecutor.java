@@ -1,5 +1,6 @@
 package ovh.quinta.UHC;
 
+import java.util.Timer;
 import java.util.TimerTask;
 
 import org.bukkit.ChatColor;
@@ -22,26 +23,30 @@ public class StartStopExecutor implements CommandExecutor {
 	private Main plugin;
 	Settings settings;
 	Server server;
-	
+
+	Timer timer;
+	TimerTask pvpTask;
+	TimerTask healTask;
+
 	public StartStopExecutor(Main plugin) {
 		this.plugin = plugin;
 		this.settings = plugin.settings;
 		this.server = plugin.server;
+		timer = new Timer();
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(label.equalsIgnoreCase("startuhc")) { // Démarre l'UHC
-			System.out.println("HERE");
 			if(!sender.hasPermission("uhc.start")) return false;
-			
+
 			plugin.pdl = new PlayerDeathListener(plugin);
 			plugin.bbl = new BlockBreakListener(plugin);
 			
 			String[] commandsStart = {
 					"gamemode 0 @a", // Tout le monde en survival
 					"clear @a", // Clear tout le monde
-					"effect @a minecraft:saturation 1 99 true", // Restaure la faim de tout le monde
+					"effect @a minecraft:saturation 2 99 true", // Restaure la faim de tout le monde
 					"spreadplayers 0 0 " + plugin.settings.spreadDistance + " " + (plugin.settings.borderSize/2) + " true @a",
 					"heal"
 			};
@@ -66,7 +71,6 @@ public class StartStopExecutor implements CommandExecutor {
 			};
 			
 			for(World w : server.getWorlds()) { // Send commands in every world
-				w.setDifficulty(Difficulty.HARD);
 				w.setGameRuleValue("sendCommandFeedback", "false");
 				w.setGameRuleValue("naturalRegeneration", "false");
 				if(plugin.settings.timeBeforePVP != 0) w.setPVP(false);
@@ -76,7 +80,7 @@ public class StartStopExecutor implements CommandExecutor {
 				}
 			}
 			
-			for(String c : scoreboardCommands) {
+			for(String c : scoreboardCommands) { // All objectives commands
 				server.dispatchCommand(plugin.console, c);
 			}
 			
@@ -87,7 +91,7 @@ public class StartStopExecutor implements CommandExecutor {
 			plugin.bi = new BorderInfo(plugin); // Creates the borderinfo
 			
 			if(settings.timeBeforePVP != 0) { // Schedule pvp if needed
-				TimerTask tt = new TimerTask() {
+				pvpTask = new TimerTask() {
 					public void run() {
 						for(World w : server.getWorlds()) {
 							w.setPVP(true);
@@ -95,17 +99,19 @@ public class StartStopExecutor implements CommandExecutor {
 						}
 					}
 				};
-				plugin.timer.schedule(tt, settings.timeBeforePVP * 60 * 1000);
+				server.broadcastMessage("Time before pvp in ms : " + settings.timeBeforePVP * 60 * 1000);
+				timer.schedule(pvpTask, settings.timeBeforePVP * 60 * 1000);
 			}
 			
 			if(settings.timeBeforeFinalHeal != 0) { // Schedule heal if needed
-				TimerTask tt = new TimerTask() {
+				healTask = new TimerTask() {
 					public void run() {
 						server.broadcastMessage(ChatColor.GREEN + "UHC : Final heal !");
 						server.dispatchCommand(plugin.console, "heal");
 					}
 				};
-				plugin.timer.schedule(tt, settings.timeBeforeFinalHeal * 60 * 1000);
+				server.broadcastMessage("Time before heal in ms : " + settings.timeBeforeFinalHeal * 60 * 1000);
+				timer.schedule(healTask, settings.timeBeforeFinalHeal * 60 * 1000);
 			}
 			
 			for(Player p : server.getOnlinePlayers()) { // Play wither sound to everyone and apply resistance for 30 seconds
@@ -114,6 +120,10 @@ public class StartStopExecutor implements CommandExecutor {
 			}
 
 			server.broadcastMessage(ChatColor.DARK_RED + "L'UHC commence");
+			String json = "tellraw @a {\"text\":\"" + ChatColor.GOLD + "Warning : Difficulty not in Hard \",\"extra\":[{\"text\":\" "+ ChatColor.BLUE +" [CLICK HERE] \",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/difficulty hard\"}}]}";
+			if(server.getWorlds().get(0).getDifficulty() != Difficulty.HARD) server.dispatchCommand(plugin.console, json);
+
+
 			plugin.settings.started = true;
 			return true;
 		}
@@ -124,7 +134,7 @@ public class StartStopExecutor implements CommandExecutor {
 			if(!sender.hasPermission("uhc.stop")) return false;
 			if(!settings.started) {
 				sender.sendMessage(ChatColor.RED + "UHC: Pas d'UHC en cours");
-				return false;
+				return true;
 			}
 			plugin.bbl.stop();
 			plugin.bbl = null;
@@ -132,13 +142,19 @@ public class StartStopExecutor implements CommandExecutor {
 			plugin.pdl = null;
 			plugin.bi.stop();
 			plugin.bi = null;
-			
+
+			pvpTask.cancel();
+			healTask.cancel();
+			timer.purge();
+
 			for(World w : server.getWorlds()) {
 				w.setGameRuleValue("sendCommandFeedback", "true");
-				w.setGameRuleValue("gamerule naturalRegeneration", "true");
+				w.setGameRuleValue("naturalRegeneration", "true");
 				server.dispatchCommand(plugin.console, "worldborder set 30000000");
+				w.setPVP(true);
 			}
-			
+
+			settings.started = false;
 			sender.sendMessage(ChatColor.GREEN + "UHC: Stopped UHC");
 		}
 		
