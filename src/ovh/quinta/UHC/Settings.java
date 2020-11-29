@@ -144,7 +144,7 @@ public class Settings implements CommandExecutor {
 					try {
 						int interval = Integer.parseInt(args[1]);
 						borderInfoInterval = Math.max(interval, 0);
-						sender.sendMessage("Le message d'information sera envoyé toutes les " + borderInfoInterval + "minutes");
+						sender.sendMessage("Le message d'information sera envoyé toutes les " + borderInfoInterval + " minutes");
 						return true;
 					}catch(IllegalArgumentException iae) {
 						sender.sendMessage(ChatColor.RED + "Usage : /uhc borderInfoInterval <Minutes entre le message d'info>");

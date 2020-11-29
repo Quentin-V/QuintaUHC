@@ -34,6 +34,7 @@ public class InventoryClickListener implements Listener {
 	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent ice) {
+		if(ice.getClickedInventory() == null) return;
 		if(ice.getClickedInventory().getType() != InventoryType.CHEST || ice.getClickedInventory().getViewers().get(0) != sender) return; // Sécurité
 		if(ice.getClickedInventory().getSize() == 45) { // Si on est dans le fenêtre de l'inventaire du joueur et non pas dans la sélection
 			ice.setCancelled(true);

@@ -157,13 +157,17 @@ public class TeamMaker implements CommandExecutor {
 				if (t != null) {
 					t.unregister();
 				}
+				try {
+					if(sc.getTeam(RANDOM_TEAMS_NAMES[i]) != null) continue;
+				}catch(IllegalArgumentException ignored) {}
 				sc.registerNewTeam(RANDOM_TEAMS_NAMES[i]);
 				plugin.server.dispatchCommand(plugin.console, "scoreboard teams option " + RANDOM_TEAMS_NAMES[i] + " color " + RANDOM_TEAMS_COLORS[i]);
 			}
 			ArrayList<Player> playerArrayList = new ArrayList<>(plugin.server.getOnlinePlayers());
-			for(int i = 0; i < playerArrayList.size(); ++i) {
+			int playerCount = playerArrayList.size();
+			for(int i = 0; i < playerCount; ++i) {
 				int random = (int) (Math.random() * playerArrayList.size());
-				sc.getTeam(RANDOM_TEAMS_NAMES[i]).addEntry(playerArrayList.remove(random).getName());
+				sc.getTeam(RANDOM_TEAMS_NAMES[i%iTeamCount]).addEntry(playerArrayList.remove(random).getName());
 			}
 			sender.sendMessage(ChatColor.GREEN + "UHC : " + iTeamCount + " teams créées");
 			showTeams(sender);

@@ -42,6 +42,7 @@ public class ArmorEquipListener implements Listener {
     }
 
     private boolean isDiamondArmor(ItemStack item) {
+        if(item == null) return false;
         Material itemMaterial = item.getData().getItemType();
         return  itemMaterial.equals(Material.DIAMOND_HELMET) ||
                 itemMaterial.equals(Material.DIAMOND_CHESTPLATE) ||

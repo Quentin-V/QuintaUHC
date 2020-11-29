@@ -1,5 +1,6 @@
 package ovh.quinta.UHC;
 
+import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -45,7 +46,6 @@ public class Main extends JavaPlugin {
 		getCommand("stopuhc").setExecutor(sse);
 		getCommand("teams").setExecutor(new TeamMaker(this));
 		getCommand("teams").setTabCompleter(new TeamTabCompleter(this));
-
 	}
 	
 	@Override
