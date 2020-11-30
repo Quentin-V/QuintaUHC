@@ -24,6 +24,9 @@ commands:
    permission-message: Vous n'avez pas l'autorisation d'utiliser cette commande
   Teams:
    description: Permet de gerer les teams
+  Pvp:
+   description: Active/desactive le pvp
+   permission: uhc.pvp
 permissions:
   uhc.heal:
    description: Autorise la commande heal
@@ -34,3 +37,9 @@ permissions:
   uhc.stop:
    description: Autorise la commande StopUHC
    defualt: op
+  uhc.pvp:
+   description: Autorise la commande pvp
+   default: op
+  uhc.settings:
+   description: Autorise la modification des parametres
+   default: op

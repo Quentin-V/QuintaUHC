@@ -37,7 +37,7 @@ public class Main extends JavaPlugin {
 		server = this.getServer();
 		console = server.getConsoleSender();
 		settings = new Settings();
-		server.broadcastMessage(ChatColor.GREEN + "QuintaUHC " + Bukkit.getVersion() + " enabled");
+		server.broadcastMessage(ChatColor.GREEN + "QuintaUHC " + getDescription().getVersion() + " enabled");
 		getCommand("uhc").setExecutor(settings);
 		getCommand("uhc").setTabCompleter(new UhcTabComplete());
 		getCommand("inv").setExecutor(new InventoryExecutor(this));
@@ -84,6 +84,26 @@ public class Main extends JavaPlugin {
 			}
 			server.broadcastMessage(ChatColor.GREEN + "UHC : Tous les joueurs ont été heal");
 			return true;
+		}else if(label.equalsIgnoreCase("pvp")) {
+			if(!sender.hasPermission("uhc.heal")) return false;
+			try {
+				String onOrOff = args[0];
+				boolean pvpBool;
+				if(onOrOff.equalsIgnoreCase("on"))
+					pvpBool = true;
+				else if(onOrOff.equalsIgnoreCase("off"))
+					pvpBool = false;
+				else
+					throw new IllegalArgumentException();
+
+				for(World w : server.getWorlds()) {
+					w.setPVP(pvpBool);
+				}
+				sender.sendMessage(ChatColor.BLUE + "UHC : PVP " + (pvpBool ? "activé" : "désactivé"));
+			}catch(ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+				sender.sendMessage(ChatColor.RED + "Usage : pvp <on|off>");
+				return false;
+			}
 		}
 		return false;
 	}
