@@ -44,7 +44,6 @@ public class Settings implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(label.equalsIgnoreCase("uhc")) {
-			if(sender.hasPermission("uhc.settings"))
 				return settings(args, sender);
 		}
 		return false;
@@ -52,6 +51,7 @@ public class Settings implements CommandExecutor {
 	
 	private boolean settings(String[] args, CommandSender sender) {
 		try {
+			if(!args[0].equalsIgnoreCase("show") && !sender.hasPermission("uhc.settings")) throw new IllegalArgumentException();
 			switch(args[0].toLowerCase()) {
 				case "bordersize":
 					try {
@@ -164,7 +164,8 @@ public class Settings implements CommandExecutor {
 					throw new IllegalArgumentException("Wrong argument");
 			}
 		}catch(ArrayIndexOutOfBoundsException | IllegalArgumentException ia) {
-			sender.sendMessage(ChatColor.RED + "Usage : /uhc [borderSize | shrinkedSize | shrinkTime | spreadDistance | appleDropRate | pvp | heal | maxDiamondArmorPieces | show] <option>");
+			if(!sender.hasPermission("uhc.settings")) sender.sendMessage(ChatColor.RED + "Usage : /uhc show");
+			else sender.sendMessage(ChatColor.RED + "Usage : /uhc [borderSize | shrinkedSize | shrinkTime | spreadDistance | appleDropRate | pvp | heal | maxDiamondArmorPieces | show] <option>");
 			return false;
 		}
 	}
