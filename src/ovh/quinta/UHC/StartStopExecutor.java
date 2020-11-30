@@ -97,7 +97,9 @@ public class StartStopExecutor implements CommandExecutor {
 					public void run() {
 						for(World w : server.getWorlds()) {
 							w.setPVP(true);
-							w.getPlayers().forEach(p -> p.sendMessage(ChatColor.GREEN + "UHC : PVP Enabled"));
+						}
+						for(Player p : server.getOnlinePlayers()) {
+							p.sendTitle(ChatColor.GOLD + "PVP activé", "");
 						}
 					}
 				};
@@ -107,7 +109,9 @@ public class StartStopExecutor implements CommandExecutor {
 			if(settings.timeBeforeFinalHeal != 0) { // Schedule heal if needed
 				healTask = new TimerTask() {
 					public void run() {
-						server.broadcastMessage(ChatColor.GREEN + "UHC : Final heal !");
+						for(Player p : server.getOnlinePlayers()) {
+							p.sendTitle(ChatColor.GREEN + "Final Heal !", "Attention à ce que vous faites");
+						}
 						server.dispatchCommand(plugin.console, "heal");
 					}
 				};
