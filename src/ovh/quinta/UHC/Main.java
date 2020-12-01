@@ -91,7 +91,10 @@ public class Main extends JavaPlugin {
 					pvpBool = true;
 				else if(onOrOff.equalsIgnoreCase("off"))
 					pvpBool = false;
-				else
+				else if(onOrOff.equalsIgnoreCase("get")) {
+					sender.sendMessage(ChatColor.BLUE + "UHC : Pvp is " + (server.getWorlds().get(0).getPVP() ? "on" : "off"));
+					return true;
+				}else
 					throw new IllegalArgumentException();
 
 				for(World w : server.getWorlds()) {
@@ -99,7 +102,7 @@ public class Main extends JavaPlugin {
 				}
 				sender.sendMessage(ChatColor.BLUE + "UHC : PVP " + (pvpBool ? "activé" : "désactivé"));
 			}catch(ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
-				sender.sendMessage(ChatColor.RED + "Usage : pvp <on|off>");
+				sender.sendMessage(ChatColor.RED + "Usage : pvp <on|off|get>");
 				return false;
 			}
 		}else if(label.equalsIgnoreCase("ready") || label.equalsIgnoreCase("r")) {
@@ -112,7 +115,8 @@ public class Main extends JavaPlugin {
 			}else if(!settings.started) {
 				if(sender instanceof Player) {
 					if(settings.readyPlayers.contains(sender)) {
-						sender.sendMessage(ChatColor.BLUE + "UHC : You're already ready");
+						sender.sendMessage(ChatColor.BLUE + "UHC : You were already ready so you're declared not ready anymore");
+						settings.readyPlayers.remove(sender);
 					}else {
 						settings.readyPlayers.add((Player)sender);
 						sender.sendMessage(ChatColor.BLUE + "UHC : You're now ready");
