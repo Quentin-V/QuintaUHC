@@ -4,6 +4,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class Settings implements CommandExecutor {
 	
@@ -18,6 +21,8 @@ public class Settings implements CommandExecutor {
 	int borderInfoInterval;
 	
 	boolean started;
+
+	ArrayList<Player> readyPlayers;
 	
 	Settings() {
 		borderSize = 800;
@@ -29,7 +34,9 @@ public class Settings implements CommandExecutor {
 		timeBeforeFinalHeal = 5;
 		maxDiamondArmorPces = 2;
 		borderInfoInterval = 5;
-		
+
+		readyPlayers = new ArrayList<>();
+
 		started = false;
 	}
 	

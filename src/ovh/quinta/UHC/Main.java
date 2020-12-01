@@ -1,7 +1,5 @@
 package ovh.quinta.UHC;
 
-import net.minecraft.server.v1_8_R3.MinecraftServer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -103,6 +101,28 @@ public class Main extends JavaPlugin {
 			}catch(ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
 				sender.sendMessage(ChatColor.RED + "Usage : pvp <on|off>");
 				return false;
+			}
+		}else if(label.equalsIgnoreCase("ready") || label.equalsIgnoreCase("r")) {
+			if(args.length > 0 && args[0].equalsIgnoreCase("list")) {
+				StringBuilder message = new StringBuilder(ChatColor.BLUE + "List of ready players (" + settings.readyPlayers.size() + ") :");
+				for(Player p : settings.readyPlayers) {
+					message.append("\n  - ").append(p.getName());
+				}
+				sender.sendMessage(message.toString());
+			}else if(!settings.started) {
+				if(sender instanceof Player) {
+					if(settings.readyPlayers.contains(sender)) {
+						sender.sendMessage(ChatColor.BLUE + "UHC : You're already ready");
+					}else {
+						settings.readyPlayers.add((Player)sender);
+						sender.sendMessage(ChatColor.BLUE + "UHC : You're now ready");
+					}
+				}else {
+					sender.sendMessage(ChatColor.RED + "UHC : Cette commande doit être faite par un joueur");
+					return false;
+				}
+			}else {
+				sender.sendMessage(ChatColor.RED + "UHC : The game has already started");
 			}
 		}
 		return false;

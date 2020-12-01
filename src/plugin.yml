@@ -1,6 +1,6 @@
 main: ovh.quinta.UHC.Main
 name: QuintaUHC
-version: 1.5
+version: 1.6
 description: Plugin de l'UHC
 author: Quinta
 prefix: UHC
@@ -27,6 +27,9 @@ commands:
   Pvp:
    description: Active/desactive le pvp
    permission: uhc.pvp
+  Ready:
+   description: Permet de savoir quand tout le monde est pret
+   aliases: r
 permissions:
   uhc.heal:
    description: Autorise la commande heal

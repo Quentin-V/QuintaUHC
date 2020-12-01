@@ -21,7 +21,18 @@ import ovh.quinta.UHC.listeners.PlayerDeathListener;
 
 public class StartStopExecutor implements CommandExecutor {
 
-	private Main plugin;
+	final String[] SCOREBOARD_COMMANDS = {
+			"scoreboard objectives add Kills playerKillCount", // Tous les objectifs
+			"scoreboard objectives add vie health",
+			"scoreboard objectives add damage stat.damageDealt",
+			"scoreboard objectives setdisplay list vie",
+			"scoreboard objectives setdisplay sidebar Kills",
+			"scoreboard objectives setdisplay belowName damage",
+			"scoreboard players reset @a Kills",
+			"scoreboard players reset @a damage"
+	};
+
+	private final Main plugin;
 	Settings settings;
 	Server server;
 
@@ -40,6 +51,16 @@ public class StartStopExecutor implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(label.equalsIgnoreCase("startuhc")) { // Démarre l'UHC
 			if(!sender.hasPermission("uhc.start")) return false;
+			if(settings.started) {
+				sender.sendMessage(ChatColor.RED + "UHC : A game is already in progress");
+				return false;
+			}
+			if(settings.readyPlayers.size() < server.getOnlinePlayers().size()) {
+				if(!(args.length > 0 && args[0].equalsIgnoreCase("force"))) { // If no force start
+					sender.sendMessage(ChatColor.GOLD + "UHC : Not all players are ready, to force the game to start do /startuhc force");
+					return false;
+				}
+			}
 
 			plugin.pdl = new PlayerDeathListener(plugin);
 			plugin.bbl = new BlockBreakListener(plugin);
@@ -51,17 +72,6 @@ public class StartStopExecutor implements CommandExecutor {
 					"effect @a minecraft:saturation 2 99 true", // Restaure la faim de tout le monde
 					"spreadplayers 0 0 " + plugin.settings.spreadDistance + " " + (plugin.settings.borderSize/2) + " true @a",
 					"heal"
-			};
-			
-			String[] scoreboardCommands = {
-					"scoreboard objectives add Kills playerKillCount", // Tous les objectifs
-					"scoreboard objectives add vie health",
-					"scoreboard objectives add damage stat.damageDealt",
-					"scoreboard objectives setdisplay list vie",
-					"scoreboard objectives setdisplay sidebar Kills",
-					"scoreboard objectives setdisplay belowName damage",
-					"scoreboard players reset @a Kills",
-					"scoreboard players reset @a damage"
 			};
 			
 			String[] worldBorderCommands = {
@@ -82,7 +92,7 @@ public class StartStopExecutor implements CommandExecutor {
 				}
 			}
 			
-			for(String c : scoreboardCommands) { // All objectives commands
+			for(String c : SCOREBOARD_COMMANDS) { // All objectives commands
 				server.dispatchCommand(plugin.console, c);
 			}
 			
